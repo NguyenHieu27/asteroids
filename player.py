@@ -1,4 +1,10 @@
-from constants import PLAYER_RADIUS, PLAYER_SPEED, PLAYER_TURN_SPEED, PLAYER_SHOOT_SPEED, PLAYER_SHOOT_COOLDOWN_SECONDS
+from constants import (
+    PLAYER_RADIUS,
+    PLAYER_SPEED,
+    PLAYER_TURN_SPEED,
+    PLAYER_SHOOT_SPEED,
+    PLAYER_SHOOT_COOLDOWN_SECONDS,
+)
 import pygame
 from circleshape import CircleShape
 from shot import Shot
@@ -9,6 +15,11 @@ class Player(CircleShape):
         super().__init__(x, y, radius)
         self.rotation = 0
         self.cooldown_timer = 0.0  # Timer to manage shooting cooldown
+        self.invulnerable = False
+        self.invulnerable_timer = 0.0
+        self.shield_hits = 0
+        self.cannon_active = False
+        self.cannon_timer = 0.0
     
     def triangle(self):
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
@@ -19,11 +30,19 @@ class Player(CircleShape):
         return [a, b, c]
     
     def draw(self, screen):
-        pygame.draw.polygon(
-            screen,
-            "white",
-            self.triangle(),
-        )
+        blink = False
+        if self.invulnerable:
+            blink = int(self.invulnerable_timer * 10) % 2 == 0
+
+        if blink:
+            color = "yellow"
+        elif self.cannon_active:
+            color = "green"
+        elif self.shield_hits > 0:
+            color = "blue"
+        else:
+            color = "white"
+        pygame.draw.polygon(screen, color, self.triangle())
     
     def rotate(self, dt):
         self.rotation += PLAYER_TURN_SPEED * dt
@@ -35,9 +54,9 @@ class Player(CircleShape):
         self.position += rotated_with_speed_vector
 
     def shoot(self):
-        if self.cooldown_timer > 0.0:
+        if not self.cannon_active and self.cooldown_timer > 0.0:
             return
-        self.cooldown_timer = PLAYER_SHOOT_COOLDOWN_SECONDS
+        self.cooldown_timer = 0.0 if self.cannon_active else PLAYER_SHOOT_COOLDOWN_SECONDS
 
         shot = Shot(self.position.x, self.position.y)
         direction = pygame.Vector2(0, 1).rotate(self.rotation)
