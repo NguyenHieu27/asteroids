@@ -2,6 +2,8 @@
 
 A classic Asteroids arcade game built with Python and Pygame, featuring power-ups, progressive difficulty, and a scoring system.
 
+![Asteroids Game Screenshot](screenshot.png)
+
 ## Credits
 
 This project is based on the guided project **"Build Asteroids using Python and Pygame"** from [Boot.dev](https://boot.dev), with additional features and enhancements.

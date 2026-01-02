@@ -1,10 +1,10 @@
 import pygame
 from circleshape import CircleShape
-from constants import LINE_WIDTH, POWERUP_RADIUS
+from constants import LINE_WIDTH, CANNON_RADIUS
 
 
 class Cannon(CircleShape):
-    def __init__(self, x, y, radius=POWERUP_RADIUS):
+    def __init__(self, x, y, radius=CANNON_RADIUS):
         super().__init__(x, y, radius)
         self.velocity = pygame.Vector2(0, 0)
 
